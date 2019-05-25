@@ -198,4 +198,14 @@
       type_id = #{typeId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+
+    <!-- 查询三级分类信息 -->
+    <select id="selectByParentId" resultType="cn.itcast.core.pojo.item.ItemCat">
+      SELECT * FROM tb_item_cat WHERE parent_id = #{id} LIMIT 15
+    </select>
+
+
+
 </mapper>

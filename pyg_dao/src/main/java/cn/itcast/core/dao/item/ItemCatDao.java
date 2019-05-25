@@ -27,4 +27,9 @@ public interface ItemCatDao {
     int updateByPrimaryKeySelective(ItemCat record);
 
     int updateByPrimaryKey(ItemCat record);
+
+        // 根据父类id - 0 , 查询分类信息
+    List<ItemCat> selectByParentId(@Param("id") Long id);
+
+
 }

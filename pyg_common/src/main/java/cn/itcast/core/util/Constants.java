@@ -1,5 +1,7 @@
 package cn.itcast.core.util;
 
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+
 /**
  * 常量
  */
@@ -15,4 +17,8 @@ public interface Constants {
     public final static String REDIS_CARTLIST = "pyg_cartList";
 
     public final static String REDIS_PAYLOG = "payLog";
+
+    public final static String REDIS_itemCat03 = "itemCat03";
 }
+
+
