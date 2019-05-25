@@ -2,8 +2,9 @@ package cn.itcast.core.dao.ad;
 
 import cn.itcast.core.pojo.ad.ContentCategory;
 import cn.itcast.core.pojo.ad.ContentCategoryQuery;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ContentCategoryDao {
     int countByExample(ContentCategoryQuery example);

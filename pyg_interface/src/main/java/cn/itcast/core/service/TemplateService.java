@@ -19,4 +19,8 @@ public interface TemplateService {
     public void delete(Long[] ids);
 
     public List<Map> findBySpecList(Long id);
+
+    PageResult search(Integer page, Integer rows, TypeTemplate typeTemplate);
+
+    List<TypeTemplate> findAll();
 }

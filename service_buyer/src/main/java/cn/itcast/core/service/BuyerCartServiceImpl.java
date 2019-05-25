@@ -1,9 +1,6 @@
 package cn.itcast.core.service;
 
-import cn.itcast.core.dao.collection.CollectionDao;
 import cn.itcast.core.dao.item.ItemDao;
-import cn.itcast.core.pojo.collection.Collection;
-import cn.itcast.core.pojo.collection.CollectionQuery;
 import cn.itcast.core.pojo.entity.BuyerCart;
 import cn.itcast.core.pojo.item.Item;
 import cn.itcast.core.pojo.order.OrderItem;
@@ -24,9 +21,6 @@ public class BuyerCartServiceImpl implements BuyerCartService {
 
     @Autowired
     private ItemDao itemDao;
-
-    @Autowired
-    private CollectionDao collectionDao;
 
     @Override
     public List<BuyerCart> addItemToCartList(List<BuyerCart> cartList, Long itemId, Integer num) {
@@ -184,80 +178,5 @@ public class BuyerCartServiceImpl implements BuyerCartService {
             }
         }
         return redisCartList;
-    }
-
-
-    /**
-     * 将商品添加到收藏
-     * @param userId    用户 ID
-     * @param ids   商品ID集合
-     */
-    @Override
-    public void addGoodsToCollection(String userId, Long[] ids) {
-
-        for (Long itemId : ids) {
-            //1. 根据商品SKU ID查询SKU商品信息
-            Item item = itemDao.selectByPrimaryKey(itemId);
-            //2. 判断商品是否存在不存在, 抛异常
-            if (item == null) {
-                throw new RuntimeException("您购买的商品不存在!");
-            }
-            //3. 判断商品状态是否为1已审核, 状态不对抛异常
-            if (!"1".equals(item.getStatus())) {
-                throw new RuntimeException("您购买的商品非法!");
-            }
-//            4、将添加的数据加到query实体类中
-            Collection collection = new Collection();
-            collection.setUserId(userId);
-            collection.setGoodsId(Integer.parseInt(String.valueOf(itemId)));
-//            5、将商品实体类添加到数据库中
-            collectionDao.insertSelective(collection);
-
-        }
-
-
-
-    }
-
-    /**
-     * 根据用户名称查询收藏商品id
-     * @param username  用户名
-     * @return
-     */
-    @Override
-    public List<Collection> findGoodsId(String username) {
-//        1、创建查询商品的query实体类
-        CollectionQuery query = new CollectionQuery();
-//        2、添加查询的条件
-        CollectionQuery.Criteria criteria = query.createCriteria();
-        criteria.andUserIdEqualTo(username);
-//        3、查询数据
-        List<Collection> userIdList = collectionDao.selectByExample(query);
-//        4、返回查询的结果
-        return userIdList;
-    }
-
-    /**
-     * 判断数据库中是否有当前商品
-     * @param goodsIds      数据库收藏信息集合信息集合
-     * @param ids           前端商品id集合
-     * @return               是否存在
-     */
-    @Override
-    public boolean isExist(List<Collection> goodsIds, Long[] ids) {
-//        1、循环商品集合
-        for (Collection collection : goodsIds) {
-//            2、获取其中的每一个商品的id
-            Integer goodsId = collection.getGoodsId();
-            long id = Long.parseLong(String.valueOf(goodsId));
-
-//            3、查询在数组中是否有当前数据
-            for (long aLong : ids) {
-                if (aLong==id){
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }

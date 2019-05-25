@@ -11,6 +11,6 @@ public interface AddressService {
      * @param userId
      * @return
      */
-    public List<Address> findListByUserId(String userId );
+    public List<Address> findListByUserId(String userId);
 
 }

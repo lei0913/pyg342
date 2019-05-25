@@ -22,6 +22,7 @@ public class TypeTemplateController {
     @Reference
     private TemplateService templateService;
 
+    //查询一个模板对象
     @RequestMapping("/findOne")
     public TypeTemplate findOne(Long id) {
         TypeTemplate one = templateService.findOne(id);
@@ -46,5 +47,61 @@ public class TypeTemplateController {
     }
 
 
+    //搜索
+    @RequestMapping("/search")
+    public PageResult search(Integer page, Integer rows, @RequestBody TypeTemplate typeTemplate){
+        return templateService.search(page,rows,typeTemplate);
+    }
+
+    //查询模板对象
+    @RequestMapping("/findAll")
+    public List<TypeTemplate> findAll() {
+        List<TypeTemplate> templateList = templateService.findAll();
+        return templateList;
+    }
+
+    //增加add
+    @RequestMapping("/add")
+    public Result add(@RequestBody TypeTemplate typeTemplate) {
+        try {
+            templateService.add(typeTemplate);
+            return new Result(true,"成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false,"失败");
+        }
+    }
+
+
+    /**
+     * 保存修改
+     *
+     */
+    @RequestMapping("/update")
+    public Result update(@RequestBody TypeTemplate typeTemplate) {
+        try {
+            templateService.update(typeTemplate);
+            return new Result(true, "修改成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, "修改失败!");
+        }
+    }
+
+    /**
+     * 删除
+     * @param ids   需要删除的id数组
+     * @return
+     */
+    @RequestMapping("/delete")
+    public Result delete(Long[] ids) {
+        try {
+            templateService.delete(ids);
+            return new Result(true, "删除成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, "删除失败!");
+        }
+    }
 
 }

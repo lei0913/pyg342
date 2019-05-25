@@ -1,6 +1,5 @@
 package cn.itcast.core.service;
 
-import cn.itcast.core.pojo.collection.Collection;
 import cn.itcast.core.pojo.entity.BuyerCart;
 
 import java.util.List;
@@ -37,30 +36,4 @@ public interface BuyerCartService {
      * @return
      */
     public List<BuyerCart> mergeCookieCartListToRedisCartList(List<BuyerCart> cookieCartList, List<BuyerCart> redisCartList);
-
-    /**
-     * 添加商品到收藏
-     * @param userId    用户 ID
-     * @param ids   商品ID集合
-     */
-     void addGoodsToCollection(String userId,Long[] ids);
-
-    /**
-     * 根据用户名查询商品id
-     * @param username  用户名
-     * @return           商品id集合
-     */
-    List<Collection>findGoodsId(String username);
-
-    /**
-     * 判断数据库中是否有当前商品
-     * @param goodsIds      数据库收藏信息集合信息集合
-     * @param ids           前端商品id集合
-     * @return               是否存在
-     */
-    boolean isExist(List<Collection> goodsIds , Long[] ids);
-
-
 }
-
-

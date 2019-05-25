@@ -2,8 +2,9 @@ package cn.itcast.core.dao.item;
 
 import cn.itcast.core.pojo.item.ItemCat;
 import cn.itcast.core.pojo.item.ItemCatQuery;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ItemCatDao {
     int countByExample(ItemCatQuery example);
@@ -28,8 +29,7 @@ public interface ItemCatDao {
 
     int updateByPrimaryKey(ItemCat record);
 
-        // 根据父类id - 0 , 查询分类信息
-    List<ItemCat> selectByParentId(@Param("id") Long id);
-
+    //网站前台实现商品分类显示
+    List<ItemCat> findItemCatListByParentId(@Param("parentId") Long parentId);
 
 }

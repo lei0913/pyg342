@@ -1,7 +1,6 @@
 package cn.itcast.core.service;
 
 import cn.itcast.core.pojo.ad.Content;
-import cn.itcast.core.pojo.ad.ContentCategory;
 import cn.itcast.core.pojo.entity.PageResult;
 
 import java.util.List;
@@ -23,5 +22,6 @@ public interface ContentService {
     public List<Content> findByCategoryId(Long categoryId);
 
     public List<Content> findByCategoryIdFromRedis(Long categoryId);
+
 
 }

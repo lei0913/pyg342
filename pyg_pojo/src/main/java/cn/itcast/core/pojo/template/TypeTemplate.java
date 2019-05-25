@@ -25,6 +25,23 @@ public class TypeTemplate implements Serializable {
      */
     private String customAttributeItems;
 
+    /**
+     * 未审核0审核1
+     */
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -96,10 +113,10 @@ public class TypeTemplate implements Serializable {
         }
         TypeTemplate other = (TypeTemplate) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-            && (this.getSpecIds() == null ? other.getSpecIds() == null : this.getSpecIds().equals(other.getSpecIds()))
-            && (this.getBrandIds() == null ? other.getBrandIds() == null : this.getBrandIds().equals(other.getBrandIds()))
-            && (this.getCustomAttributeItems() == null ? other.getCustomAttributeItems() == null : this.getCustomAttributeItems().equals(other.getCustomAttributeItems()));
+                && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+                && (this.getSpecIds() == null ? other.getSpecIds() == null : this.getSpecIds().equals(other.getSpecIds()))
+                && (this.getBrandIds() == null ? other.getBrandIds() == null : this.getBrandIds().equals(other.getBrandIds()))
+                && (this.getCustomAttributeItems() == null ? other.getCustomAttributeItems() == null : this.getCustomAttributeItems().equals(other.getCustomAttributeItems()));
     }
 
     @Override

@@ -15,7 +15,7 @@ public interface OrderService {
      * @param userName
      * @return
      */
-    public PayLog findPayLogFromRedis(String  userName);
+    public PayLog findPayLogFromRedis(String userName);
 
 
     /**
@@ -23,5 +23,5 @@ public interface OrderService {
      * @param out_trade_no      支付单号, payLog支付日志的主键
      * @param transaction_id    交易号, 微信给我们返回的
      */
-    public void updateOrderStatus(String out_trade_no,String transaction_id);
+    public void updateOrderStatus(String out_trade_no, String transaction_id);
 }

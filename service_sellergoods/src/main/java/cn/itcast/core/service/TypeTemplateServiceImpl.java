@@ -1,5 +1,6 @@
 package cn.itcast.core.service;
 
+import cn.itcast.core.dao.specification.SpecificationDao;
 import cn.itcast.core.dao.specification.SpecificationOptionDao;
 import cn.itcast.core.dao.template.TypeTemplateDao;
 import cn.itcast.core.pojo.entity.PageResult;
@@ -14,21 +15,21 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional
-public class TemplateServiceImpl implements TemplateService {
+public class TypeTemplateServiceImpl implements TypeTemplateService {
 
     @Autowired
     private TypeTemplateDao typeTemplateDao;
 
     @Autowired
-    private SpecificationOptionDao optionDao;
+    private SpecificationDao specificationDao;
+
+    @Autowired
+    private SpecificationOptionDao specificationOptionDao;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -36,56 +37,54 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public PageResult findPage(TypeTemplate template, Integer page, Integer rows) {
         /**
-         * 缓存模板中的数据到redis中, 供前台搜索使用
+         * 缓存根据模板id 缓存品牌集合数据
          */
-        List<TypeTemplate> typeTemplates = typeTemplateDao.selectByExample(null);
-        if (typeTemplates != null) {
-            for (TypeTemplate typeTemplate : typeTemplates) {
-                //1.获取品牌json字符串
+        List<TypeTemplate> templateList = typeTemplateDao.selectByExample(null);
+        if (templateList != null) {
+            for (TypeTemplate typeTemplate : templateList) {
+                //获取品牌json字符串
                 String brandJsonStr = typeTemplate.getBrandIds();
-                //2. 将品牌json字符串转换成集合
+                //将品牌json字符串转换成集合
                 List<Map> brandList = JSON.parseArray(brandJsonStr, Map.class);
-                //3. 将模板id作为小key, 品牌集合作为value缓存入redis中
+                //将模板id作为小key 品牌集合作为value换存入redis
                 redisTemplate.boundHashOps(Constants.REDIS_BRANDLIST).put(typeTemplate.getId(), brandList);
-
-                //4. 根据模板id, 获取规格以及规格选项集合数据
+                //根据模板id获取规格及规格寻香记和数据
                 List<Map> specList = findBySpecList(typeTemplate.getId());
                 redisTemplate.boundHashOps(Constants.REDIS_SPECLIST).put(typeTemplate.getId(), specList);
             }
         }
 
-        /**
-         * 分页查询
-         */
-        PageHelper.startPage(page, rows );
+        //分页
+        PageHelper.startPage(page, rows);
         //创建查询对象
         TypeTemplateQuery query = new TypeTemplateQuery();
-        //创建sql语句的where查询条件对象
         TypeTemplateQuery.Criteria criteria = query.createCriteria();
         if (template != null) {
             if (template.getName() != null && !"".equals(template.getName())) {
-                criteria.andNameLike("%"+template.getName()+"%");
+                criteria.andNameLike("%" + template.getName() + "%");
             }
         }
+        Page<TypeTemplate> typeTemplates = (Page<TypeTemplate>) typeTemplateDao.selectByExample(query);
 
-        Page<TypeTemplate> templateList = (Page<TypeTemplate>)typeTemplateDao.selectByExample(query);
-        return new PageResult(templateList.getTotal(), templateList.getResult());
+        return new PageResult(typeTemplates.getTotal(), typeTemplates.getResult());
     }
 
     @Override
     public void add(TypeTemplate template) {
         typeTemplateDao.insertSelective(template);
-        if ("".equals(template.getStatus())) {
-            template.setStatus("0");
-        }
     }
 
     @Override
     public void update(TypeTemplate template) {
-        if (!typeTemplateDao.selectByPrimaryKey(template.getId()).equals(template)){
-            template.setStatus("0");
+        typeTemplateDao.updateByPrimaryKeySelective(template);
+    }
 
-            typeTemplateDao.updateByPrimaryKeySelective(template);
+    @Override
+    public void delete(Long[] ids) {
+        if (ids != null) {
+            for (Long id : ids) {
+                typeTemplateDao.deleteByPrimaryKey(id);
+            }
         }
     }
 
@@ -93,20 +92,6 @@ public class TemplateServiceImpl implements TemplateService {
     public TypeTemplate findOne(Long id) {
         return typeTemplateDao.selectByPrimaryKey(id);
     }
-
-    @Override
-    public void delete(Long[] ids) {
-        if (ids != null) {
-           /* for (Long id : ids) {
-                typeTemplateDao.deleteByPrimaryKey(id);
-            }*/
-            TypeTemplateQuery typeTemplateQuery = new TypeTemplateQuery();
-            typeTemplateQuery.createCriteria().andIdIn(Arrays.asList(ids));
-            typeTemplateDao.deleteByExample(typeTemplateQuery);
-        }
-
-    }
-
     /**
      * 根据模板id, 查询对应的规格集合和规格选项集合数据
      * @param id    模板id
@@ -117,7 +102,7 @@ public class TemplateServiceImpl implements TemplateService {
         //1. 根据模板id, 查询对应模板实体对象
         TypeTemplate template = typeTemplateDao.selectByPrimaryKey(id);
         //2. 找到模板实体对象后获取规格json格式字符串
-        String specJsonStr = template.getSpecIds();
+        String specJsonStr = template.getBrandIds();
         //3. 解析json格式字符串为java对象
         List<Map> specList = JSON.parseArray(specJsonStr, Map.class);
         //4. 遍历规格集合
@@ -128,7 +113,7 @@ public class TemplateServiceImpl implements TemplateService {
                 SpecificationOptionQuery query = new SpecificationOptionQuery();
                 SpecificationOptionQuery.Criteria criteria = query.createCriteria();
                 criteria.andSpecIdEqualTo(specId);
-                List<SpecificationOption> optionList = optionDao.selectByExample(query);
+                List<SpecificationOption> optionList = specificationOptionDao.selectByExample(query);
                 //6. 将规格选项集合封装到规格对象中返回
                 specMap.put("options", optionList);
             }
@@ -136,39 +121,5 @@ public class TemplateServiceImpl implements TemplateService {
 
         return specList;
     }
-
-    //搜索
-    @Override
-    public PageResult search(Integer page, Integer rows, TypeTemplate typeTemplate) {
-        //分页小助手
-        PageHelper.startPage(page, rows);
-
-        //条件查询
-        TypeTemplateQuery query = new TypeTemplateQuery();
-        TypeTemplateQuery.Criteria criteria = query.createCriteria();
-        //根据查询返回的审核状态确定是否显示
-        //判断状态
-        if (null != typeTemplate.getStatus() && !"".equals(typeTemplate.getStatus())) {
-            criteria.andStatusEqualTo(typeTemplate.getStatus());
-        }
-
-        //规格名称  模糊查询
-        if (null != typeTemplate.getName() && !"".equals(typeTemplate.getName().trim())) {
-            criteria.andNameLike("%" + typeTemplate.getName().trim() + "%");
-        }
-
-
-        Page<TypeTemplate> p = (Page<TypeTemplate>) typeTemplateDao.selectByExample(query);
-
-        return new PageResult(p.getTotal(), p.getResult());
-    }
-
-    //查询所有
-    @Override
-    public List<TypeTemplate> findAll() {
-        List<TypeTemplate> templateList = typeTemplateDao.selectByExample(null);
-        return templateList;
-    }
-
 
 }

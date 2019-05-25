@@ -1,10 +1,19 @@
 app.service("contentService",function($http){
+
+
+
 	this.findByCategoryId = function(categoryId){
 		return $http.get("content/findByCategoryId.do?categoryId="+categoryId);
 	}
 
 
-    this.findByParentId = function(parentId){
-        return $http.get("content/findByParentId.do?parentId="+parentId);
+    this.findByCategoryId5 = function(categoryId){
+        return $http.get("content/findByCategoryId5.do?categoryId="+categoryId);
+    }
+
+    //网站前台商品分类显示
+    //查询商品分类信息
+    this.findItemCatList = function () {
+        return $http.get("index/findItemCatList.do");
     }
 });
