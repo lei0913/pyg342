@@ -86,5 +86,78 @@ app.controller('cartController',function($scope,cartService){
 			}				
 		);		
 	}
+
+
+
+    // 定义一个数组:
+    $scope.selectIds = [];
+    // 更新复选框：
+    $scope.updateSelection = function($event,id){
+    	alert(id);
+        // 复选框选中
+        if($event.target.checked){
+            // 向数组中添加元素
+            $scope.selectIds.push(id);
+        }else{
+            // 从数组中移除
+            var idx = $scope.selectIds.indexOf(id);
+            $scope.selectIds.splice(idx,1);
+        }
+
+    }
+    // 删除品牌:
+    $scope.dele = function(){
+        brandService.collection().success(function(response){
+            // 判断保存是否成功:
+            if(response.success==true){
+
+                // 保存成功
+                // alert(response.message);
+                $scope.reloadList();
+                $scope.selectIds = [];
+            }else{
+                // 保存失败
+                alert(response.message);
+            }
+        });
+    }
+
+    // 批量添加关注
+    $scope.addGoodsToCollection = function(id){
+    	alert("2112");
+
+        cartService.addGoodsToCollection($scope.selectIds).success(function(response){
+        	alert("2222");
+        	if (response.success==true){
+        		alert(response.message);
+//     $scope.reloadList();		//重新加载当前列表
+//     $scope.selectIds = [];		//重新定义一个数组，清除原来选中的数据
+			}else {
+        		alert(response.message);
+			}
+        });
+    }
+
+
+    // 添加单个商品到关注
+    $scope.addToCollection = function(id){
+        alert("2112");
+        alert(id);
+
+        $scope.selectIds = [];
+        $scope.selectIds.push(id);
+        alert("12");
+        cartService.addToCollection($scope.selectIds).success(function(response){
+            alert("2222");
+            if (response.success==true){
+                alert(response.message);
+//     $scope.reloadList();		//重新加载当前列表
+//     $scope.selectIds = [];		//重新定义一个数组，清除原来选中的数据
+            }else {
+                alert(response.message);
+            }
+        });
+    }
+
 	
 });
