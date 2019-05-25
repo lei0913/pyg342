@@ -9,7 +9,27 @@ app.service('cartService',function($http){
 	this.addGoodsToCartList=function(itemId,num){
 		return $http.get('cart/addGoodsToCartList.do?itemId='+itemId+'&num='+num);
 	}
-	
+
+    this.dele = function(id){
+        return $http.get("../cart/collection.do?id="+id);
+    }
+
+
+	// 批量添加关注
+    this.addGoodsToCollection = function(ids){
+		alert("service");
+        return $http.get('cart/addGoodsToCollection.do?ids='+ids);
+    }
+
+    // 添加单个商品到关注
+    this.addToCollection = function(ids){
+        alert("service");
+        return $http.get('cart/addGoodsToCollection.do?ids='+ids);
+    }
+
+
+
+
 	//求合计数
 	this.sum=function(cartList){
 		var totalValue={totalNum:0,totalMoney:0 };

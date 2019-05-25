@@ -1,5 +1,6 @@
 package cn.itcast.core.controller;
 
+import cn.itcast.core.pojo.collection.Collection;
 import cn.itcast.core.pojo.entity.BuyerCart;
 import cn.itcast.core.pojo.entity.Result;
 import cn.itcast.core.service.BuyerCartService;
@@ -35,6 +36,7 @@ public class CartController {
 
     @Autowired
     private HttpServletResponse response;
+
 
     /**
      * 添加商品到购物车中
@@ -100,4 +102,53 @@ public class CartController {
             return redisCartList;
         }
     }
+
+    /**
+     * 购物车收藏
+     * @param ids   商品的id
+     * @return      添加的结果
+     */
+    @RequestMapping("/addGoodsToCollection")
+    public Result addGoodsToCollection(Long[] ids){
+
+        try {
+//        1、获取当前用户的用户名
+         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+//        2、判断出入的数据是否为空
+            if (ids==null&&ids.length==0){
+                return new Result(false,"请重新选择商品");
+            }
+//        3、判断用户是否登录
+            if ("anonymousUser".equals(userName)) {
+
+                return new Result(false,"请登录");
+            }
+
+
+//        4、查询数据库中当前用户的数据
+            List<Collection> goodsId = buyerCartService.findGoodsId(userName);
+//        5、查询是否与数据中冲突
+            boolean exist = buyerCartService.isExist(goodsId, ids);
+            if (exist) {
+//                6、如果没有相同数据，则添加
+                buyerCartService.addGoodsToCollection(userName, ids);
+
+//
+                return new Result(true, "添加成功");
+            }else {
+                return new Result(false,"商品已存在");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //        4、如果添加失败，返回添加失败
+            return new Result(false,"商品添加失败");
+        }
+
+
+
+    }
+
+
+
 }
