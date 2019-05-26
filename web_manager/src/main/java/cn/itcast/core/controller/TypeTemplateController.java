@@ -35,6 +35,7 @@ public class TypeTemplateController {
     @RequestMapping("/add")
     public Result add(@RequestBody TypeTemplate template) {
         try {
+
             templateService.add(template);
             return new Result(true, "添加成功!");
         } catch (Exception e) {
@@ -70,6 +71,20 @@ public class TypeTemplateController {
         } catch (Exception e) {
             e.printStackTrace();
             return new Result(false, "删除失败!");
+        }
+    }
+
+
+    //开始审核
+    @RequestMapping("/updateStatus")
+    public Result updateStatus(Long[] ids,String status) {
+        try{
+            templateService.updateStatus(ids,status);
+
+            return new Result(true, "成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, "失败!");
         }
     }
 

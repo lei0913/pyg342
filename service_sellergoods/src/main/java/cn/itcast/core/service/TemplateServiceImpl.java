@@ -74,10 +74,11 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public void add(TypeTemplate template) {
-        typeTemplateDao.insertSelective(template);
+
         if ("".equals(template.getStatus())) {
             template.setStatus("0");
         }
+        typeTemplateDao.insertSelective(template);
     }
 
     @Override
@@ -147,6 +148,7 @@ public class TemplateServiceImpl implements TemplateService {
         TypeTemplateQuery query = new TypeTemplateQuery();
         TypeTemplateQuery.Criteria criteria = query.createCriteria();
         //根据查询返回的审核状态确定是否显示
+
         //判断状态
         if (null != typeTemplate.getStatus() && !"".equals(typeTemplate.getStatus())) {
             criteria.andStatusEqualTo(typeTemplate.getStatus());
@@ -170,5 +172,15 @@ public class TemplateServiceImpl implements TemplateService {
         return templateList;
     }
 
+    //开始审核  参数1:数组 商品表 的ID    参数2： 驳回  2
+    @Override
+    public void updateStatus(Long[] ids, String status) {
+        for (Long id : ids) {
+            TypeTemplate typeTemplate = typeTemplateDao.selectByPrimaryKey(id);
+            typeTemplate.setStatus(status);
+            typeTemplateDao.updateByPrimaryKeySelective(typeTemplate);
+
+        }
+    }
 
 }

@@ -9,6 +9,12 @@ app.service('typeTemplateService',function($http){
 	this.findPage=function(page,rows){
 		return $http.get('../typeTemplate/findPage.do?page='+page+'&rows='+rows);
 	}
+
+    //开始审核  审核通过 或是驳回
+    this.updateStatus=function (status, ids) {
+        return $http.get('../typeTemplate/updateStatus.do?ids='+ids+"&status="+status);
+    }
+
 	//查询实体
 	this.findOne=function(id){
 		return $http.get('../typeTemplate/findOne.do?id='+id);

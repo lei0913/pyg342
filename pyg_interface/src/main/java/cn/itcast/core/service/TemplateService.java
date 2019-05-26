@@ -23,4 +23,7 @@ public interface TemplateService {
     PageResult search(Integer page, Integer rows, TypeTemplate typeTemplate);
 
     List<TypeTemplate> findAll();
+
+    void updateStatus(Long[] ids, String status);
+
 }

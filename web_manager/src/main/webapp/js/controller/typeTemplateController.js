@@ -21,6 +21,17 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 			}			
 		);
 	}
+
+    // 显示状态
+    $scope.status = ["未审核","审核通过","审核未通过","关闭"];
+    // 审核的方法:,
+    $scope.updateStatus=function (status) {
+        typeTemplateService.updateStatus(status,$scope.selectIds).success(function (response) {
+
+            alert(response.message);
+            $scope.reloadList();
+        })
+    }
 	
 	//查询实体 
 	$scope.findOne=function(id){				
