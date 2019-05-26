@@ -63,6 +63,10 @@ public class TemplateServiceImpl implements TemplateService {
         //创建sql语句的where查询条件对象
         TypeTemplateQuery.Criteria criteria = query.createCriteria();
         if (template != null) {
+            if (template.getStatus() != null && !"".equals(template.getStatus())) {
+                criteria.andStatusEqualTo(template.getStatus());
+            }
+
             if (template.getName() != null && !"".equals(template.getName())) {
                 criteria.andNameLike("%"+template.getName()+"%");
             }

@@ -89,7 +89,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     id,name,spec_ids,brand_ids,custom_attribute_items
     from tb_type_template
     where id = #{id,jdbcType=BIGINT}
@@ -105,9 +105,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.itcast.core.pojo.template.TypeTemplate" >
-    insert into tb_type_template (id, name, spec_ids, 
+    insert into tb_type_template (id, name, spec_ids,
       brand_ids, custom_attribute_items)
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{specIds,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{specIds,jdbcType=VARCHAR},
       #{brandIds,jdbcType=VARCHAR}, #{customAttributeItems,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.itcast.core.pojo.template.TypeTemplate" >
@@ -201,6 +201,9 @@
       </if>
       <if test="customAttributeItems != null" >
         custom_attribute_items = #{customAttributeItems,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
