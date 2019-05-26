@@ -80,12 +80,11 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	$scope.search=function(page,rows){			
 		typeTemplateService.search(page,rows,$scope.searchEntity).success(
 			function(response){
-				$scope.list=response.rows;	
+				$scope.list=response.rows;
 				$scope.paginationConf.totalItems=response.total;//更新总记录数
 			}			
 		);
 	}
-
 
     // 显示状态
     $scope.status = ["待审核","审核通过","审核未通过","关闭"];

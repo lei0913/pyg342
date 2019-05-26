@@ -1,5 +1,6 @@
 package cn.itcast.core.service;
 
+import cn.itcast.core.pojo.entity.PageResult;
 import cn.itcast.core.pojo.user.User;
 
 public interface UserService {
@@ -23,4 +24,20 @@ public interface UserService {
      * @param user
      */
     public void add(User user);
+
+    /**
+     * 开始审核
+     * @param ids
+     * @param status
+     */
+    void updateStatus(Long[] ids, String status);
+
+    /**
+     * 高级分页查询
+     * @param user
+     * @param page
+     * @param rows
+     * @return
+     */
+    public PageResult findPage(User user, Integer page, Integer rows);
 }

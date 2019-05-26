@@ -1,13 +1,16 @@
 package cn.itcast.core.service;
 
 import cn.itcast.core.dao.user.UserDao;
+import cn.itcast.core.pojo.entity.PageResult;
 import cn.itcast.core.pojo.user.User;
+import cn.itcast.core.pojo.user.UserQuery;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -114,4 +117,60 @@ public class UserServiceImpl implements UserService {
         long random = (long)(Math.random() * 1000000);
         System.out.println("=======" + random);
     }
+
+    /**
+     * 改
+     * @param user
+     * @param page
+     * @param rows
+     * @return
+     */
+    @Override
+    public PageResult findPage(User user, Integer page, Integer rows) {
+       /* *//**
+         * 缓存模板中的数据到redis中, 供前台搜索使用
+         *//*
+        List<User> users = userDao.selectByExample(null);
+        if (user != null) {
+            for (User user1 : users) {
+                //1.获取用户名字符串
+                String user1NameStr = user1.getName();
+                //2. 将用户名json字符串转换成集合
+                List<Map> brandList = JSON.parseArray(user1NameStr, Map.class);
+                //3. 将用户id作为小key, 名字作为value缓存入redis中
+                redisTemplate.boundHashOps(Constants.REDIS_BRANDLIST).put(user1.getId(), brandList);
+            }
+        }*/
+        //分页
+        PageHelper.startPage(page, rows);
+        //创建查询对象
+        UserQuery userQuery = new UserQuery();
+        UserQuery.Criteria criteria = userQuery.createCriteria();
+        if (user != null) {
+            if (user.getName() != null && !"".equals(user.getName())) {
+                criteria.andNameLike("%" + user.getName() + "%");
+            }
+        }
+        Page<User> userPage = (Page<User>) userDao.selectByExample(userQuery);
+
+        return new PageResult(userPage.getTotal(), userPage.getResult());
+    }
+
+    /**
+     * 继续改
+     * @param ids
+     * @param status
+     */
+    //开始审核  参数1:数组 商品表 的ID    参数2： 驳回  2
+    @Override
+    public void updateStatus(Long[] ids, String status) {
+        for (Long id : ids) {
+            User user = userDao.selectByPrimaryKey(id);
+            user.setStatus(status);
+            userDao.updateByPrimaryKeySelective(user);
+
+        }
+    }
+
+
 }

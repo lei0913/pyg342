@@ -11,6 +11,15 @@ public class PageResult implements Serializable{
 
     private Long total;//总记录数
     private List rows;//当前页结果
+   /* private String status;//状态码
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }*/
 
     public PageResult(Long total, List rows) {
         this.total = total;
